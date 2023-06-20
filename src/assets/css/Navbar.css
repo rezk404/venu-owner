@@ -1,0 +1,29 @@
+.nav-link:hover {
+	font-weight: 500;
+}
+.selected-nav {
+	font-weight: 500;
+	background-color: #0a1429;
+	color: white !important;
+}
+.nav-item .selected-nav:hover{
+	color: white;
+}
+.nav-link{
+	padding-left: 10px;
+	padding-right: 10px;
+	border-radius: 0.5rem
+}
+
+#root{
+	background-color: #f3f3f3;
+}
+
+#bgimg{
+	object-fit: fill;
+}
+@media only screen and (max-width: 767px) {
+	#bgimg {
+		object-fit: cover;
+	}
+ }

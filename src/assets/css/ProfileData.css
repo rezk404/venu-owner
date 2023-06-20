@@ -1,0 +1,6 @@
+.form-control:read-only {
+	color: rgb(187, 187, 187);
+	.form-control:focus {
+		box-shadow: none;
+	}
+}
