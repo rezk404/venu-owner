@@ -173,7 +173,7 @@ const StadiumData = () => {
 							type="text"
 							className="form-control"
 							id="location"
-							name="location"
+							name="location_url"
 							value={formData.location_url}
 							onChange={handleChange}
 						/>
@@ -206,7 +206,7 @@ const StadiumData = () => {
 							type="text"
 							className="form-control"
 							id="facebook"
-							name="facebook"
+							name="facebook_url"
 							value={formData.facebook_url}
 							onChange={handleChange}
 						/>
@@ -295,7 +295,7 @@ const StadiumData = () => {
 							type="text"
 							className="form-control"
 							id="instagram"
-							name="instagram"
+							name="instagram_url"
 							value={formData.instagram_url}
 							onChange={handleChange}
 						/>
