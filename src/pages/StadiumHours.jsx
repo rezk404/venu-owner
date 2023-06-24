@@ -89,28 +89,39 @@ const StadiumHours = () => {
 			toast.success('Successfully Added Hour');
 			setSelectedDate(null);
 			toggleModal();
-			fetchStadiumHours(cookies.access_token, stadiumData.id).then(
-				(hoursData) => {
-					setEvents(
-						hoursData.map((data) => {
-							return {
-								id: data.id,
-								title: `${data.from} - ${data.to}`,
-								start: new Date(
-									`${data.day}T${convertTo24HourFormat(
-										data.from
-									)}`
-								),
-								end: new Date(
-									`${data.day}T${convertTo24HourFormat(
-										data.to
-									)}`
-								),
-							};
-						})
-					);
-				}
-			);
+			const newEvent = {
+				title: `${from} ${fromPeriod} - ${to} ${toPeriod}`,
+				start: new Date(
+					`${selectedDate}T${convertTo24HourFormat(from)}`
+				),
+				end: new Date(`${selectedDate}T${convertTo24HourFormat(to)}`),
+			};
+			console.log(newEvent);
+			setEvents((prev) => {
+				return [...prev, newEvent];
+			});
+			// fetchStadiumHours(cookies.access_token, stadiumData.id).then(
+			// 	(hoursData) => {
+			// 		setEvents(
+			// 			hoursData.map((data) => {
+			// 				return {
+			// 					id: data.id,
+			// 					title: `${data.from} - ${data.to}`,
+			// 					start: new Date(
+			// 						`${data.day}T${convertTo24HourFormat(
+			// 							data.from
+			// 						)}`
+			// 					),
+			// 					end: new Date(
+			// 						`${data.day}T${convertTo24HourFormat(
+			// 							data.to
+			// 						)}`
+			// 					),
+			// 				};
+			// 			})
+			// 		);
+			// 	}
+			// );
 			setTo('');
 			setFrom('');
 			setToPeriod('AM');
