@@ -14,6 +14,7 @@ import {
 import {
 	addStadiumHour,
 	deleteStadiumHour,
+	fetchStadiumData,
 	fetchStadiumHours,
 } from '../helpers/apiHelpers';
 import { convertTo24HourFormat } from '../helpers/dataHelpers';
@@ -31,21 +32,32 @@ const StadiumHours = () => {
 	const [fromPeriod, setFromPeriod] = useState('AM');
 	const [toPeriod, setToPeriod] = useState('AM');
 	const [events, setEvents] = useState([]);
+	const [stadiumData, setStadiumData] = useState(null);
 	useEffect(() => {
-		fetchStadiumHours(cookies.access_token).then((hoursData) => {
-			setEvents(
-				hoursData.map((data) => {
-					return {
-						id: data.id,
-						title: `${data.from} - ${data.to}`,
-						start: new Date(
-							`${data.day}T${convertTo24HourFormat(data.from)}`
-						),
-						end: new Date(
-							`${data.day}T${convertTo24HourFormat(data.to)}`
-						),
-					};
-				})
+		fetchStadiumData(cookies.access_token).then((data) => {
+			setStadiumData({ ...data });
+
+			fetchStadiumHours(cookies.access_token, data.id).then(
+				(hoursData) => {
+					setEvents(
+						hoursData.map((data) => {
+							return {
+								id: data.id,
+								title: `${data.from} - ${data.to}`,
+								start: new Date(
+									`${data.day}T${convertTo24HourFormat(
+										data.from
+									)}`
+								),
+								end: new Date(
+									`${data.day}T${convertTo24HourFormat(
+										data.to
+									)}`
+								),
+							};
+						})
+					);
+				}
 			);
 		});
 	}, []);
@@ -71,29 +83,34 @@ const StadiumHours = () => {
 			day: selectedDate,
 			from: `${from} ${fromPeriod}`,
 			to: `${to} ${toPeriod}`,
+			price: 0,
 		});
 		if (data.success) {
 			toast.success('Successfully Added Hour');
 			setSelectedDate(null);
 			toggleModal();
-			fetchStadiumHours(cookies.access_token).then((hoursData) => {
-				setEvents(
-					hoursData.map((data) => {
-						return {
-							id: data.id,
-							title: `${data.from} - ${data.to}`,
-							start: new Date(
-								`${data.day}T${convertTo24HourFormat(
-									data.from
-								)}`
-							),
-							end: new Date(
-								`${data.day}T${convertTo24HourFormat(data.to)}`
-							),
-						};
-					})
-				);
-			});
+			fetchStadiumHours(cookies.access_token, stadiumData.id).then(
+				(hoursData) => {
+					setEvents(
+						hoursData.map((data) => {
+							return {
+								id: data.id,
+								title: `${data.from} - ${data.to}`,
+								start: new Date(
+									`${data.day}T${convertTo24HourFormat(
+										data.from
+									)}`
+								),
+								end: new Date(
+									`${data.day}T${convertTo24HourFormat(
+										data.to
+									)}`
+								),
+							};
+						})
+					);
+				}
+			);
 			setTo('');
 			setFrom('');
 			setToPeriod('AM');

@@ -85,9 +85,9 @@ async function updateProfilePassword(authorizationCookie, data) {
 	return response.data;
 }
 
-async function fetchStadiumHours(authorizationCookie) {
+async function fetchStadiumHours(authorizationCookie, stadiumId) {
 	const response = await axios.get(
-		`${import.meta.env.VITE_API_URL}/venue/stadium-hours/1`,
+		`${import.meta.env.VITE_API_URL}/venue/stadium-hours/${stadiumId}`,
 		{
 			headers: {
 				Authorization: `Bearer ${authorizationCookie}`,
@@ -120,6 +120,18 @@ async function deleteStadiumHour(authorizationCookie, hourId) {
 	);
 	return response.data;
 }
+async function updateStadiumImage(authorizationCookie, data) {
+	const response = await axios.post(
+		`${import.meta.env.VITE_API_URL}/venue/upload-stadium-image`,
+		data,
+		{
+			headers: {
+				Authorization: `Bearer ${authorizationCookie}`,
+			},
+		}
+	);
+	return response.data;
+}
 export {
 	fetchCities,
 	fetchAreas,
@@ -132,4 +144,4 @@ export {
 	fetchStadiumHours,
 	deleteStadiumHour,
 	addStadiumHour,
-};
+	updateStadiumImage};

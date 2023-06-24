@@ -4,6 +4,7 @@ import {
 	fetchCities,
 	fetchStadiumData,
 	updateStadiumData,
+	updateStadiumImage,
 } from '../helpers/apiHelpers';
 import { grassTypes, stadiumTypes } from '../helpers/dataHelpers';
 import { useCookies } from 'react-cookie';
@@ -22,25 +23,11 @@ const StadiumData = () => {
 				fetchCities().then((citiesData) => {
 					setCities(citiesData);
 
-					const city = citiesData.find(
-						(city) => city.name === data.city
-					).id;
-					let area;
 					fetchAreas(city).then((areasData) => {
 						setAreas(areasData);
-						area = areasData.find(
-							(area) => area.name === data.area
-						).id;
+
 						setFormData({
 							...data,
-							type: stadiumTypes.find(
-								(type) => type.name === data.type
-							).id,
-							city,
-							area,
-							gross_type: grassTypes.find(
-								(type) => type.name === data.gross_type
-							).id,
 						});
 					});
 				});
@@ -65,24 +52,27 @@ const StadiumData = () => {
 		e.preventDefault();
 		// Perform saving/updating logic here
 		console.log(formData);
-		let dataToSubmit = new FormData();
-		dataToSubmit.append('name', formData.name);
-		dataToSubmit.append('type', formData.type);
-		dataToSubmit.append('area_id', formData.area);
-		dataToSubmit.append('city_id', formData.city);
-		dataToSubmit.append('location_url', formData.location_url);
-		dataToSubmit.append('space', formData.space);
-		dataToSubmit.append('facebook_url', formData.facebook_url);
-		dataToSubmit.append('instagram_url', formData.instagram_url);
-		dataToSubmit.append('gross_type', formData.gross_type);
 		if (newImage) {
+			let dataToSubmit = new FormData();
 			dataToSubmit.append('image', newImage);
+			const data = await updateStadiumImage(
+				cookies.access_token,
+				dataToSubmit
+			);
+			if (data.success) {
+				toast.success('Image changed successfully');
+			} else {
+				toast.error(data.error);
+			}
 		}
 
-		const data = await updateStadiumData(
-			cookies.access_token,
-			dataToSubmit
-		);
+		const data = await updateStadiumData(cookies.access_token, {
+			name: formData.name,
+			location_url: formData.location_url,
+			facebook_url: formData.facebook_url,
+			instagram_url: formData.instagram_url,
+			phone: '0',
+		});
 		if (data.success) {
 			toast.success(data.message);
 		} else {
@@ -182,21 +172,14 @@ const StadiumData = () => {
 						<label htmlFor="type" className="form-label">
 							Stadium Type
 						</label>
-						<select
-							className="form-select"
+						<input
+							className="form-control"
 							id="type"
 							name="type"
 							value={formData.type}
+							readOnly
 							onChange={handleChange}
-						>
-							{stadiumTypes.map((type) => {
-								return (
-									<option key={type.id} value={type.id}>
-										{type.name}
-									</option>
-								);
-							})}
-						</select>
+						></input>
 					</div>
 					<div className="mb-3">
 						<label htmlFor="facebook" className="form-label">
@@ -222,6 +205,7 @@ const StadiumData = () => {
 							name="space"
 							value={formData.space}
 							onChange={handleChange}
+							readOnly
 						/>
 					</div>
 					{/* Rest of the fields for the first column */}
@@ -231,61 +215,40 @@ const StadiumData = () => {
 						<label htmlFor="city" className="form-label">
 							City
 						</label>
-						<select
-							className="form-select"
+						<input
+							className="form-control"
 							id="city"
 							name="city"
 							value={formData.city}
 							onChange={handleChange}
-						>
-							{cities.map((city) => {
-								return (
-									<option key={city.id} value={city.id}>
-										{city.name}
-									</option>
-								);
-							})}
-						</select>
+							readOnly={true}
+						></input>
 					</div>
 					<div className="mb-3">
 						<label htmlFor="area" className="form-label">
 							Area
 						</label>
-						<select
-							className="form-select"
+						<input
+							className="form-control"
 							id="area"
 							name="area"
 							value={formData.area}
 							onChange={handleChange}
-						>
-							{areas.map((area) => {
-								return (
-									<option key={area.id} value={area.id}>
-										{area.name}
-									</option>
-								);
-							})}
-						</select>
+							readOnly={true}
+						></input>
 					</div>
 					<div className="mb-3">
 						<label htmlFor="gross_type" className="form-label">
 							Grass Type
 						</label>
-						<select
-							className="form-select"
+						<input
+							className="form-control"
 							id="gross_type"
 							name="gross_type"
 							value={formData.gross_type}
 							onChange={handleChange}
-						>
-							{grassTypes.map((type) => {
-								return (
-									<option key={type.id} value={type.id}>
-										{type.name}
-									</option>
-								);
-							})}
-						</select>
+							readOnly
+						></input>
 					</div>
 					<div className="mb-3">
 						<label htmlFor="instagram" className="form-label">
